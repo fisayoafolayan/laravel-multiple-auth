@@ -4,7 +4,7 @@ A simple implementation of multiple authentication in Laravel.
 ## Set up
 To set up this project, first clone the repositiory
 ```bash
-$ git clone https://github.com/chiefoleka/laravel-multiple-auth.git
+$ git clone https://github.com/fisayoafolayan/laravel-multiple-auth.git
 ```
 
 Change your working directory into the project directory
