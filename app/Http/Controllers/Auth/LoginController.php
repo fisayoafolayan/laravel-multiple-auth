@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Support\Facades\Config;
 
 class LoginController extends Controller
 {
@@ -41,41 +42,83 @@ class LoginController extends Controller
         $this->middleware('guest:writer')->except('logout');
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showAdminLoginForm()
     {
-        return view('auth.login', ['url' => 'admin']);
+        return view('auth.login', [
+            'url' => Config::get('constants.guards.admin')
+        ]);
     }
 
-    public function adminLogin(Request $request)
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showWriterLoginForm()
     {
-        $this->validate($request, [
+        return view('auth.login', [
+            'url' => Config::get('constants.guards.writer')
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    protected function validator(Request $request)
+    {
+        return $this->validate($request, [
             'email'   => 'required|email',
             'password' => 'required|min:6'
         ]);
+    }
 
-        if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+    /**
+     * @param Request $request
+     * @param $guard
+     * @return bool
+     */
+    protected function guardLogin(Request $request, $guard)
+    {
+        $this->validator($request);
 
+        return Auth::guard($guard)->attempt(
+            [
+                'email' => $request->email,
+                'password' => $request->password
+            ],
+            $request->get('remember')
+        );
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function adminLogin(Request $request)
+    {
+        if ($this->guardLogin($request, Config::get('constants.guards.admin'))) {
             return redirect()->intended('/admin');
         }
+
         return back()->withInput($request->only('email', 'remember'));
     }
 
-    public function showWriterLoginForm()
-    {
-        return view('auth.login', ['url' => 'writer']);
-    }
 
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function writerLogin(Request $request)
     {
-        $this->validate($request, [
-            'email'   => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-
-        if (Auth::guard('writer')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
-
+        if ($this->guardLogin($request,Config::get('constants.guards.writer'))) {
             return redirect()->intended('/writer');
         }
+
         return back()->withInput($request->only('email', 'remember'));
     }
 }

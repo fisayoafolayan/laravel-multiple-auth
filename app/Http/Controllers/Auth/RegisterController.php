@@ -59,16 +59,27 @@ class RegisterController extends Controller
         ]);
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showAdminRegisterForm()
     {
         return view('auth.register', ['url' => 'admin']);
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showWriterRegisterForm()
     {
         return view('auth.register', ['url' => 'writer']);
     }
 
+    /**
+     * @param array $data
+     *
+     * @return mixed
+     */
     protected function create(array $data)
     {
         return User::create([
@@ -78,24 +89,34 @@ class RegisterController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     protected function createAdmin(Request $request)
     {
         $this->validator($request->all())->validate();
-        $admin = Admin::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
+        Admin::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
         return redirect()->intended('login/admin');
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     protected function createWriter(Request $request)
     {
         $this->validator($request->all())->validate();
-        $writer = Writer::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
+        Writer::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
         return redirect()->intended('login/writer');
     }
