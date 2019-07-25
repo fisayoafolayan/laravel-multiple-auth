@@ -35,6 +35,8 @@ Run the application with the following command
 $ php artisan serve
 ```
 
+Remember to visit `http://localhost:8000/register/writer` and `http://localhost:8000/register/admin` to register writers and admins respectively. Then visit `http://localhost:8000/login/writer` and `http://localhost:8000/login/admin` to login the writers and admins respectively.
+
 ## Built With
 [Laravel](https://laravel.com/) - The PHP Framework For Web Artisans.
 
